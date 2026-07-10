@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Log Meals</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#f2eee2;color:#1a1814;font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+.wrap{max-width:420px;width:100%;text-align:center}
+h1{font-size:28px;margin-bottom:6px}
+.sub{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.22em;color:#8b8577;text-transform:uppercase;margin-bottom:34px}
+.btn{display:block;width:100%;background:#5f7237;color:#fff;border:none;border-radius:16px;padding:22px;font-size:19px;font-weight:800;cursor:pointer}
+.note{font-size:13px;color:#8b8577;line-height:1.55;margin-top:22px}
+.err{color:#b0483a;font-weight:700;margin-top:16px;font-size:14px;display:none}
+.stamp{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.18em;color:#b5ad9a}
+</style></head><body>
+<div class="wrap">
+<h1>Log Meals</h1>
+<div class="sub">Meal Logging System</div>
+<button class="btn" onclick="document.getElementById('f').click()">Open a day</button>
+<input type="file" id="f" hidden accept=".html,.htm,text/html">
+<div class="note">Pick a draft or final from OneDrive &rsaquo; Meal Log. The day opens as itself — everything runs inside it.</div>
+<div class="err" id="err"></div>
+</div>
+<div class="stamp">DOORWAY v1</div>
+<script>
+document.getElementById('f').addEventListener('change',function(e){
+  var file=e.target.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(){
+    var t=r.result;
+    if(t.indexOf('id="daydata"')<0){
+      var el=document.getElementById('err');
+      el.textContent='That is not a day file (no data block found). Pick a meal-log draft or final.';
+      el.style.display='block';e.target.value='';return;
+    }
+    document.open();document.write(t);document.close();
+  };
+  r.onerror=function(){
+    var el=document.getElementById('err');
+    el.textContent='Could not read the file: '+(r.error&&r.error.message||'unknown');
+    el.style.display='block';
+  };
+  r.readAsText(file);
+});
+</script></body></html>
