@@ -12,9 +12,6 @@ h1{font-size:28px;margin-bottom:6px}
 .btn{display:block;width:100%;background:#5f7237;color:#fff;border:none;border-radius:16px;padding:22px;font-size:19px;font-weight:800;cursor:pointer}
 .note{font-size:13px;color:#8b8577;line-height:1.55;margin-top:22px}
 .err{color:#b0483a;font-weight:700;margin-top:16px;font-size:14px;display:none}
-.row{display:flex;gap:10px;margin-top:26px;justify-content:center}
-.ghost{background:transparent;border:1px solid #cfc7b2;color:#454036;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif}
-.ghost.gear{padding:12px 14px;color:#8b8577}
 .stamp{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.18em;color:#b5ad9a}
 </style></head><body>
 <div class="wrap">
@@ -22,18 +19,14 @@ h1{font-size:28px;margin-bottom:6px}
 <div class="sub">Meal Logging System</div>
 <button class="btn" onclick="document.getElementById('f').click()">Open a day</button>
 <input type="file" id="f" hidden accept=".html,.htm,text/html">
-<div class="note">Pick a draft or final from OneDrive &rsaquo; Meal Log. The day opens as itself — everything runs inside it.</div>
-<div class="row">
-<button class="ghost" onclick="goOD()">OneDrive</button>
-<button class="ghost" onclick="goChat()">Chat</button>
-<button class="ghost gear" onclick="setChat()">&#9881;</button>
-</div>
+<div class="note">Pick a draft or final from OneDrive &rsaquo; Meal Log. The day opens as itself &mdash; everything runs inside it.</div>
 <div class="err" id="err"></div>
 </div>
-<div class="stamp">DOORWAY v2</div>
+<div class="stamp">DOORWAY v3</div>
 <script>
 document.getElementById('f').addEventListener('change',function(e){
   var file=e.target.files[0];if(!file)return;
+  document.getElementById('err').style.display='none';
   var r=new FileReader();
   r.onload=function(){
     var t=r.result;
@@ -47,25 +40,8 @@ document.getElementById('f').addEventListener('change',function(e){
   r.onerror=function(){
     var el=document.getElementById('err');
     el.textContent='Could not read the file: '+(r.error&&r.error.message||'unknown');
-    el.style.display='block';
+    el.style.display='block';e.target.value='';
   };
   r.readAsText(file);
 });
-
-function goOD(){
-  var t=Date.now();
-  window.location.href='ms-onedrive://';
-  setTimeout(function(){if(Date.now()-t<1600)window.location.href='https://onedrive.live.com';},1200);
-}
-function chatURL(){try{return localStorage.getItem('mls_chat_url')||'';}catch(e){return '';}}
-function goChat(){
-  var u=chatURL();
-  window.location.href=u||'https://claude.ai';
-}
-function setChat(){
-  var cur=chatURL();
-  var u=prompt('Paste the link to your Meal Log chat (from Claude: share / copy link to the conversation). Leave empty to clear.',cur);
-  if(u===null)return;
-  try{u=u.trim();if(u)localStorage.setItem('mls_chat_url',u);else localStorage.removeItem('mls_chat_url');}catch(e){alert('Could not store the link: '+e.message);}
-}
 </script></body></html>
